@@ -1,0 +1,32 @@
+_target_: src.models.complex_ins_target_extraction_module.ConditionInsExtractionComplex
+spec_abs_exponent: 0.5
+spec_factor: 0.3
+use_ema: False
+ema_beta: 0.9999
+ema_power: 0.7
+generated_frame_length: 256
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 1e-4
+  betas : [0.9, 0.99]
+  
+scheduler: null
+
+net:
+  _target_: src.models.backbones.unet2d.BaseUnet
+  
+diffusion:
+  _target_: src.models.components.diffusion.EluDiffusion
+  
+sampler:
+  _target_: src.models.components.sampler.ADPM2Sampler
+
+noise_distribution:
+  _target_: src.models.components.distribution.LogNormalDistribution
+
+noise_scheduler:
+  _target_: src.models.components.scheduler.KarrasSchedule
+  
+

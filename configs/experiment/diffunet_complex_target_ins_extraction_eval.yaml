@@ -1,0 +1,105 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: condition_ins_target_extraction_datamodule.yaml
+  - override /model: diffunet_complex_target_ins_extraction.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["slakh", "diffunet_complex", "target_source_extraction"]
+audio_len: 256
+audio_frequency: 256
+seed: 12345
+sample_rate: 16000
+sampler_steps: 8
+
+trainer:
+  min_epochs: 1600
+  max_epochs: 1600
+  num_sanity_val_steps: -1
+
+model:
+  spec_abs_exponent: 0.2
+  spec_factor: 0.6
+  audio_sample_rate: ${sample_rate}
+  use_ema: False
+  use_res_channel: False
+  condition_drop_prob: 0.0
+  condition_mix_drop_prob: 0.0
+  positive_mask_drop_prob: 0.0
+  negative_mask_drop_prob: 0.0
+  use_psuedo_masks: True
+  inference_cond_gen: False
+  inference_inpaint: False
+  inference_uncondition: False
+  generated_frame_length: ${audio_len}
+  generated_frequency: ${audio_frequency}
+  n_fft: 510
+  hop_length: 256
+  optimizer:
+    lr: 1e-4 # 4e-5
+  net:
+    _target_: src.models.backbones.unet2d.UNet2dBase
+    cond_on_text: True
+    text_embed_dim: 768
+    max_text_len: 120
+    dim: 128
+    cond_drop_prob: 0.0
+    dim_mults: [1, 2, 2, 2]
+    channels: 2
+    condition_channels: 5
+    num_resnet_blocks: 2
+    resnet_groups: 8
+    layer_attns: [False, False, True, True]
+    layer_cross_attns: [False, False, True, True]
+    attn_heads: 2
+    ff_mult: 2.
+    memory_efficient: True
+    use_condition_block: True
+    mixture_input: False
+  diffusion:
+    sigma_data : 0.2
+    dynamic_threshold : 0.0
+  noise_distribution:
+    mean : -1.0 
+    std : 1.2
+  sampler:
+    # rho: 1.0
+    # num_steps: 50
+    # cond_scale: 1.0
+    _target_: src.models.components.sampler.DPMSampler
+    num_steps: ${sampler_steps}
+    cond_scale: 1
+    order: 1
+    multisteps: true
+    x0_pred: false
+    log_time_spacing: false
+  noise_scheduler:
+    sigma_min : 0.002
+    sigma_max : 80.0 
+    rho : 7.0
+    num_steps : ${sampler_steps}
+
+data:
+  track_dir: ${paths.data_dir}/Music/slakh2100_flac_redux
+  hop_length: 256
+  num_frames: ${audio_len}
+  sample_rate: ${sample_rate}
+  augment: True
+  humming_prob: 0.0
+  org_mix_prob: 1.0
+  tar_ins: 'Organ'
+  inf_real: False
+  batch_size: 1
+  num_workers: 8
+  pin_memory: False
+
+  
+logger:
+  wandb:
+    tags: ${tags}
+    group: "diffaudio-target_extraction-complex"

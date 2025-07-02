@@ -1,0 +1,19 @@
+_target_: src.models.mask_pred_module.ConditionInsExtractionMaskPrediction
+use_ema: False
+ema_beta: 0.9999
+ema_power: 0.7
+generated_frame_length: 256
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 1e-4
+  betas : [0.9, 0.99]
+  
+scheduler: null
+
+net:
+  _target_: src.models.backbones.unet2d_mask_pred.UNet2dBase
+
+  
+

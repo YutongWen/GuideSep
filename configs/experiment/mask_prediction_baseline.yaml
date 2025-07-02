@@ -1,0 +1,74 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: condition_ins_target_extraction_datamodule.yaml
+  - override /model: mask_pred_model.yaml
+  - override /callbacks: custom_exp2.yaml
+  - override /trainer: gpu.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["slakh", "mask_pred_baseline", "target_source_extraction"]
+audio_len: 256
+audio_frequency: 256
+seed: 12345
+sample_rate: 16000
+
+trainer:
+  min_epochs: 6400
+  max_epochs: 6400
+  num_sanity_val_steps: -1
+  gradient_clip_val: 1.0
+  gradient_clip_algorithm: norm
+  check_val_every_n_epoch: 50
+
+model:
+  audio_sample_rate: ${sample_rate}
+  use_ema: False
+  condition_drop_prob: 0.3
+  positive_mask_drop_prob: 0.7
+  negative_mask_drop_prob: 0.7
+  generated_frame_length: ${audio_len}
+  generated_frequency: ${audio_frequency}
+  n_fft: 510
+  hop_length: 256
+  optimizer:
+    lr: 1e-4 # 4e-5
+  net:
+    _target_: src.models.backbones.unet2d_mask_pred.UNet2dBase
+    dim: 128
+    cond_drop_prob: 0.0
+    dim_mults: [1, 2, 2, 2]
+    channels: 1
+    condition_channels: 3
+    num_resnet_blocks: 2
+    resnet_groups: 8
+    layer_attns: [False, False, True, True]
+    layer_cross_attns: [False, False, True, True]
+    attn_heads: 2
+    ff_mult: 2.
+    memory_efficient: True
+    use_condition_block: True
+    mixture_input: False
+
+data:
+  track_dir: ${paths.data_dir}/Music/slakh2100_flac_redux
+  hop_length: 256
+  num_frames: ${audio_len}
+  sample_rate: ${sample_rate}
+  augment: True
+  humming_prob: 0.0
+  org_mix_prob: 0.0
+  batch_size: 18
+  num_workers: 16
+  pin_memory: False
+
+  
+logger:
+  wandb:
+    tags: ${tags}
+    group: "diffaudio-target_extraction-complex"

@@ -1,0 +1,8 @@
+_target_: src.data.slakh_multi_ins_cond_datamodule.SlakhMultiInsDataModule
+track_dir: ${paths.data_dir}/Music/slakh2100_flac_redux
+hop_length: 128
+num_frames: 128
+sample_rate: 16000
+batch_size: 16
+num_workers: 8
+pin_memory: False
