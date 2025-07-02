@@ -1,5 +1,8 @@
 # GuideSep
-<div align="center">
+
+This is the official code implementation for the paper USER-GUIDED GENERATIVE SOURCE SEPARATION.
+
+<div>
 
 <a href="https://pytorch.org/get-started/locally/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-ee4c2c?logo=pytorch&logoColor=white"></a>
 <a href="https://pytorchlightning.ai/"><img alt="Lightning" src="https://img.shields.io/badge/-Lightning-792ee5?logo=pytorchlightning&logoColor=white"></a>
@@ -15,20 +18,15 @@
 - [Setup](#setup)
     * [Install dependencies](#install-dependencies)
     * [Hydra-lightning](#install-dependencies)
+    * [FluidSynth](#install-dependencies)
 - [How to run](#how-to-run)
     * [Run experiment and evaluation](#run-experiment-and-evaluation)
     * [Examples](#examples)
     * [Demo page](#demo-page)
-- [Diffusion components](#diffusion-components)
-    * [1.Diffusion](#1diffusion)
 
 ## Description
 
-A pedagogical diffuser codebase designed for audio using denoising score matching formulation discussed in EDM. 
-We have included a collection or (re)implementations of diffusion models, together with VAE, VQ-GAN for various audio applications. 
-This repository uses hydra-lightning config management and is suitable for developping new models efficiently.
-Since the diffusion process can be shared across different tasks, we will try to cover various audio based applications.
-Additionally, this repo can be used as a learning resource for diffusion models which includes detailed docstrings linked to the paper, comments, and notebooks for introducing diffusion models both theoretically and practically.
+Music source separation (MSS) aims to extract individual instrument sources from their mixture. While most existing methods focus on the widely adopted four-stem separation setup (vocals, bass, drums, and other instru- ments), this approach lacks the flexibility needed for real-world applications. To address this, we propose GuideSep, a diffusion-based MSS model capable of instrument-agnostic separation beyond the four-stem setup. GuideSep is conditioned on multiple inputs: a waveform mimicry condition, which can be easily provided by humming or playing the target melody, and mel-spectrogram domain masks, which offer additional guidance for separation. Unlike prior approaches that relied on fixed class labels or sound queries, our conditioning scheme, coupled with the generative approach, provides greater flexibility and applicability. Additionally, we design a mask-prediction baseline using the same model architecture to systematically compare predictive and generative approaches. Our objective and subjective evaluations demonstrate that GuideSep achieves high-quality separation while enabling more versatile instrument extraction, highlighting the potential of user participation in the diffusion-based generative pro- cess for MSS.
 
 
 ## Setup
@@ -53,6 +51,12 @@ pip install -r requirements.txt
 ### Hydra-lightning
 
 A config management tool that decouples dataloaders, training, network backbones etc.
+
+### FluidSynth
+
+Install [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/Download) for training data simulation. You don't need this for inference with your own uploaded audio. 
+
+For virtual instruments, we use [Aegean Symphonic Orchestra](https://sites.google.com/view/hed-sounds/aegean-symphonic-orchestra). Please download the Soundfont sf2 and put it in the project directory.
 
 ## How to run
 
@@ -97,83 +101,6 @@ We list implemented "essential oils" for the audio diffuser, the following examp
 
 ### Demo Page
 We generate samples (if any) from pretrained models in [example section](#examples), hosted in the branch [web_demo](https://github.com/gzhu06/AudioDiffuser/tree/web_demo) at [https://gzhu06.github.io/AudioDiffuser/](https://gzhu06.github.io/AudioDiffuser/).
-
-## Diffusion components
-In this repo, we mainly use the desnoising score matching formulation discussed in [EDM](https://github.com/NVlabs/edm) based on [Audio Diffusion release v0.0.94](https://github.com/archinetai/audio-diffusion-pytorch/releases/tag/v0.0.94). In EDM, a common framework is proposed for many diffusion models and decouples the design of sampling schedule, noise level parameterization etc.
-
-### 1.Diffusion
-
-The forward function runs one neural function evaluation (NFE). In EDM, the diffusion model training involves pre-conditioning and loss weighting, inference involves denoising which calls `forward`.
-
-```python
-class Diffusion(nn.Module):
-    
-    @abstractmethod
-    def loss_weight(self):
-        pass
-    
-    @abstractmethod
-    def get_scale_weights(self):
-        pass
-
-    def denoise_fn(self):
-        pass
-
-    def forward(self):
-        pass
-
-```
-
-### 2.Sampler
-Different samplers take different parameters 
-
-### 3.Scheduler
-
-### 4.Backbones
-
-### 5. Generation Evaulation
-We compare different frameworks by testing on sc09 dataset using [unconditional audio generation benchmark repo](https://github.com/gzhu06/Unconditional-Audio-Generation-Benchmark). 
-
-### 6.Other Applications
-Speech enhancement
-Super resolution
-source separation
-vocoder
-super-resolution
-
-
-## TODO
-### Code
-- [ ] use flash attention (torch version)
-- [ ] add pooled embeddings
-- [ ] post-hoc ema
-- [ ] checkpointing
-- [ ] add dpmv3
-- [ ] add wavelet
-- [ ] consistency models
-- [ ] applications: source separation
-- [ ] discrete diffusion
-
-<!-- ### Notebooks TODO
-- [ ] Sampler: ADM sampling
-- [ ] Diffusion
-- [ ] Scheduler
-
-### Check TODO
-- Diffusion: ADM sampling -->
-
-## Notebooks
-
-We listed our note on diffusion models.
-
-## Code References
-- [k-Diffusion by Katherine Crowson](https://github.com/crowsonkb/k-diffusion)
-- [EDM by Nvdia](https://github.com/NVlabs/edm)
-- [Audio Diffusion by Flavio](https://github.com/archinetai/audio-diffusion-pytorch)
-- [EfficientUNet by lucidrians](https://github.com/lucidrains/imagen-pytorch)
-- [UNet in ADM by openai](https://github.com/openai/guided-diffusion)
-- [Unconditional diffwave by philsyn](https://github.com/philsyn/DiffWave-unconditional)
-
 
 ## Resources
 This repo is generated with [lightning-hydra-template](https://github.com/ashleve/lightning-hydra-template).
