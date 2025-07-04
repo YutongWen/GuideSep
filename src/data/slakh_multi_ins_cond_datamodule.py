@@ -1112,9 +1112,9 @@ class SlakhMultiInsDataModule(LightningDataModule):
         """
         # load and split datasets only if not loaded already
         if self.hparams.inf_real:
-            self.data_test = InferenceDataset(track_path='mix_l',
-                                              cond_path='cond_l',
-                                              mask_path='masks_l',
+            self.data_test = InferenceDataset(track_path='mix',
+                                              cond_path='cond',
+                                              mask_path='masks',
                                               sample_rate=self.hparams.sample_rate,
                                               tar_len=self.audio_len/self.hparams.sample_rate,
                                               hop_len=self.hparams.hop_length)
