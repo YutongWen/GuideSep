@@ -17,6 +17,7 @@ audio_len: 256
 audio_frequency: 256
 seed: 12345
 sample_rate: 16000
+sampler_steps: 8
 
 trainer:
   min_epochs: 6400
@@ -65,20 +66,31 @@ model:
     use_condition_block: True
     mixture_input: False
   diffusion:
+    _target_: src.models.components.diffusion.EluDiffusion
     sigma_data : 0.2
     dynamic_threshold : 0.0
   noise_distribution:
+    _target_: src.models.components.distribution.LogNormalDistribution
     mean : -1.0 
     std : 1.2
   sampler:
-    rho: 1.0
-    num_steps: 50
-    cond_scale: 1.0
+    # _target_: src.models.components.sampler.ADPM2Sampler
+    # rho: 1.0
+    # num_steps: 50
+    # cond_scale: 1.0
+    _target_: src.models.components.sampler.DPMSampler
+    num_steps: ${sampler_steps}
+    cond_scale: 1
+    order: 1
+    multisteps: true
+    x0_pred: false
+    log_time_spacing: false
   noise_scheduler:
+    _target_: src.models.components.scheduler.KarrasSchedule
     sigma_min : 0.002
     sigma_max : 80.0 
     rho : 7.0
-    num_steps : 50
+    num_steps : ${sampler_steps}
 
 data:
   track_dir: ${paths.data_dir}/Music/slakh2100_flac_redux

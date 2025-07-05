@@ -469,9 +469,7 @@ class ConditionInsExtractionComplex(LightningModule):
             if p_mask is not None and n_mask is not None:
                 mel_mask[:, :1, :, :] = torch.where(p_mask, torch.tensor(-1.0), mel_mask[:, :1, :, :])
                 mel_mask[:, 1:, :, :] = torch.where(n_mask, torch.tensor(-1.0), mel_mask[:, 1:, :, :])
-            
-            print(mel_mask.shape, condition.shape, spec_mixture.shape)
-            
+                       
             # separation
             inj_channels = torch.cat((spec_mixture, condition, mel_mask), dim=1) # (batch, 5, 256, 256)
             

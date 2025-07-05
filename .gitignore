@@ -13,14 +13,12 @@ AegeanSymphonicOrchestra-SND/
 data_sample/
 template_input/
 imitation_sim_matrix/
-cond/
-mix/
-masks/
 # C extensions
 *.so
 *.pdf 
 *.wav
 plot.py
+.npy
 
 # Distribution / packaging
 .Python

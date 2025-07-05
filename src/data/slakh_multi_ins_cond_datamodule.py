@@ -952,7 +952,6 @@ class InferenceDataset(Dataset):
         p_mask_filename = os.path.join(self.mask_path, 'mask_' + filename.split('/')[-1].split('.wav')[0] + '_p.npy')
         # read mask if exist
         if os.path.exists(p_mask_filename):
-            print('hererere')
             mel_spec_mask_p = np.load(p_mask_filename)
             mel_spec_mask_p = mel_spec_mask(mel_spec=mel_spec_mask_p,
                                           threshold=0.0,

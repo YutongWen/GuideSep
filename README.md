@@ -18,6 +18,7 @@ This is the official code implementation for the paper USER-GUIDED GENERATIVE SO
 - [Setup](#setup)
     * [Install dependencies](#install-dependencies)
     * [FluidSynth](#install-dependencies)
+- [Model Checkpoint](#model-checkpoint)
 - [How to run](#how-to-run)
     * [Run experiment and evaluation](#run-experiment-and-evaluation)
     * [Demo page](#demo-page)
@@ -47,13 +48,23 @@ conda install pytorch torchvision torchaudio -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
 
+Please change the root directory in the `configs/paths/default.yaml`.
+
 ### FluidSynth
 
-Install [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/Download) for training data simulation. You don't need this for inference with your own uploaded audio. 
+Optional: install [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/Download) for training data simulation. You don't need this for inference with your own uploaded audio. 
 
-For virtual instruments, we use [Aegean Symphonic Orchestra](https://sites.google.com/view/hed-sounds/aegean-symphonic-orchestra). Please download the Soundfont sf2 and put it in the project directory.
+Optional: for virtual instruments, we use [Aegean Symphonic Orchestra](https://sites.google.com/view/hed-sounds/aegean-symphonic-orchestra). Please download the Soundfont sf2 and put it in the project directory.
+
+## Model Checkpoint
+
+Model checkpoint is available at [Hugging Face](https://huggingface.co/YutongCooper/GuideSep-v1)
 
 ## How to run
+### Run inference with user provided samples
+A simple inference scipt is available at `inference.ipynb`. This notebook loads the provided model checkpoint, and does separation using a provided example from `mix/` and `cond/`. The script implements a simple UI for mask sketching. You can provide your own masks for separation. 
+
+The diffusion inference scheduler and sampler configs are read from `configs/experiment/diffunet_complex_target_ins_extraction.yaml`. You can change the sampler config directly in the yaml file.
 
 ### Run experiment and evaluation
 Train model with chosen experiment configuration from [configs/experiment/](configs/experiment/)
@@ -75,14 +86,6 @@ Or evaluation:
 ```bash
 CUDA_VISIBLE_DEVICES=3 python src/eval.py ckpt_path='dummy.ckpt' +trainer.precision=16 experiment=diffunet_complex_target_ins_extraction_eval.yaml
 ```
-
-### Run inference with user provided samples
-
-```bash
-CUDA_VISIBLE_DEVICES=3 python src/eval.py ckpt_path='dummy.ckpt' +trainer.precision=16 experiment=real_cond_eval.yaml
-```
-
-Please store the mixture samples in the `mix/` diretory, condition samples (e.g. hummings) in the `cond/` directory, and optional masks in the `masks/` direcotry. `sketch.ipynb` could help to generate positive and negative masks. An inference script will be available soon for more convenient usage. 
 
 ### Demo Page
 We show demos of our model performing separation on real-world music with user-input humming as well as samples under evaluation setup. The dmeo page is hosted in the branch [demo](https://github.com/YutongWen/GuideSep/tree/demo) at [https://yutongwen.github.io/GuideSep/](https://yutongwen.github.io/GuideSep/).
