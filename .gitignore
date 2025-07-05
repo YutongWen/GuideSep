@@ -16,7 +16,6 @@ imitation_sim_matrix/
 # C extensions
 *.so
 *.pdf 
-*.wav
 plot.py
 .npy
 
