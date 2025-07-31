@@ -92,3 +92,18 @@ We show demos of our model performing separation on real-world music with user-i
 
 ## Resources
 This repo is generated with [lightning-hydra-template](https://github.com/ashleve/lightning-hydra-template).
+
+## Citation
+
+If you find GuideSep useful, please cite:
+
+Y. Wen, M. Kim, and P. Smaragdis, “User-Guided Generative Source Separation”, in Proc. of the 26th Int. Society for Music Information Retrieval Conf., Daejeon, South Korea, 2025.
+
+```bibtex
+@inproceedings{wen2025guidesep,
+  author    = {Yutong Wen and Minje Kim and Paris Smaragdis},
+  title     = {User-Guided Generative Source Separation},
+  booktitle = {Proceedings of the 26th International Society for Music Information Retrieval Conference (ISMIR)},
+  year      = {2025},
+  address   = {Daejeon, South Korea}
+}
